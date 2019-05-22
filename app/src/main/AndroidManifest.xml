@@ -16,7 +16,10 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="CYCFygCoF593ZpPEbskxDf9DXHMYouKU" />
-
+        //声明定位用的组件
+        <service android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote"/>
 
         <activity android:name=".MainActivity">
             <intent-filter>
@@ -40,8 +43,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     //这个权限用于进行网络定位
     <uses-permission android:name="android.permission.WRITE_SETTINGS"
-        tools:ignore="ProtectedPermissions">
-    </uses-permission>
+        tools:ignore="ProtectedPermissions"/>
     //这个权限用于访问GPS定位
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     //获取统计数

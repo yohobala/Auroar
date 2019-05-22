@@ -15,13 +15,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //设置地图
+        //设置地图参数
         BaiduMapOptions options = new BaiduMapOptions();
         options.mapType(BaiduMap.MAP_TYPE_SATELLITE);
-        //获取地图控件引用
+        //获取地图
         mMapView = new  MapView(this, options);
         mMapView =(MapView) findViewById(R.id.bmapView);
-
+        //开启定位
     }
     @Override
     protected void onResume() {
