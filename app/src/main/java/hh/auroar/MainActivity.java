@@ -5,6 +5,8 @@ import android.os.Bundle;
 
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BaiduMapOptions;
 import com.baidu.mapapi.map.MapView;
 
 public class MainActivity extends AppCompatActivity {
@@ -13,8 +15,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //设置地图
+        BaiduMapOptions options = new BaiduMapOptions();
+        options.mapType(BaiduMap.MAP_TYPE_SATELLITE);
         //获取地图控件引用
-        mMapView = (MapView) findViewById(R.id.bmapView);
+        mMapView = new  MapView(this, options);
+        mMapView =(MapView) findViewById(R.id.bmapView);
+
     }
     @Override
     protected void onResume() {
