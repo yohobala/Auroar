@@ -1,7 +1,16 @@
 package hh.auroar;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -11,74 +20,178 @@ import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BaiduMapOptions;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.*;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.search.geocode.GeoCodeResult;
+import com.baidu.mapapi.search.geocode.GeoCoder;
+import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
+import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private MapView mMapView = null;
+    //声明定位设置
+    LocationClientOption locationOption = new LocationClientOption();
+    //声明LocationClient类
     public LocationClient LocationClient = null;
     private MyLocationListener myListener = new MyLocationListener();
-    private BaiduMap mBaiduMap;
+    public BaiduMap mBaiduMap;
+    //声明坐标
+    private LatLng point;
+    private double latitude;
+    public double longitude;
+
+
+    //布局文件声明
+    //声明地图图层
+    private MapView mMapView = null;
+    private Button MapMarker;
+
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //设置地图参数
         BaiduMapOptions options = new BaiduMapOptions();
-        options.mapType(BaiduMap.MAP_TYPE_NORMAL);
-        //获取地图
+        options.mapType(BaiduMap.MAP_TYPE_NORMAL);//普通2D地图
+        //创建地图，并把设置参数加上
         mMapView = new MapView(this, options);
-        setContentView(mMapView);
+        mMapView=findViewById(R.id.bmapView);
+        //设置mBbaiMap,并开启定位图层
         mBaiduMap = mMapView.getMap();
         mBaiduMap.setMyLocationEnabled(true);
-        //
+       // 删除百度地图LoGo
+        mMapView.removeViewAt(1);
+
+        //注册监听函数
         LocationClient = new LocationClient(getApplicationContext());
-        //声明LocationClient类
         LocationClient.registerLocationListener(myListener);
-        //注册监听函数
-        //定位服务的客户端。宿主程序在客户端声明此类，并调用，目前只支持在主线程中启动
-        LocationClient locationClient = new LocationClient(getApplicationContext());
-        //声明LocationClient类实例并配置定位参数
-        LocationClientOption locationOption = new LocationClientOption();
-        //可选，默认高精度，设置定位模式，高精度，低功耗，仅设备
-        locationOption.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
-        //可选，默认gcj02，设置返回的定位结果坐标系，如果配合百度地图使用，建议设置为bd09ll;
-        locationOption.setCoorType("gcj02");
-        //可选，默认0，即仅定位一次，设置发起连续定位请求的间隔需要大于等于1000ms才是有效的
-        locationOption.setScanSpan(1000);
-        //可选，设置是否需要地址信息，默认不需要
-        locationOption.setIsNeedAddress(true);
-        //可选，设置是否需要地址描述
-        locationOption.setIsNeedLocationDescribe(true);
-        //可选，设置是否需要设备方向结果
-        locationOption.setNeedDeviceDirect(false);
-        //可选，默认false，设置是否当gps有效时按照1S1次频率输出GPS结果
-        locationOption.setLocationNotify(true);
-        //可选，默认true，定位SDK内部是一个SERVICE，并放到了独立进程，设置是否在stop的时候杀死这个进程，默认不杀死
-        locationOption.setIgnoreKillProcess(true);
-        //可选，默认false，设置是否需要位置语义化结果，可以在BDLocation.getLocationDescribe里得到，结果类似于“在北京天安门附近”
-        locationOption.setIsNeedLocationDescribe(true);
-        //可选，默认false，设置是否需要POI结果，可以在BDLocation.getPoiList里得到
-        locationOption.setIsNeedLocationPoiList(true);
-        //可选，默认false，设置是否收集CRASH信息，默认收集
-        locationOption.SetIgnoreCacheException(false);
-        //可选，默认false，设置是否开启Gps定位
-        locationOption.setOpenGps(true);
-        //可选，默认false，设置定位时是否需要海拔信息，默认不需要，除基础定位版本都可用
-        locationOption.setIsNeedAltitude(false);
-        //注册监听函数
-        MyLocationListener myLocationListener = new MyLocationListener();
-        locationClient.registerLocationListener(myLocationListener);
-        //设置打开自动回调位置模式，该开关打开后，期间只要定位SDK检测到位置变化就会主动回调给开发者，该模式下开发者无需再关心定位间隔是多少，定位SDK本身发现位置变化就会及时回调给开发者
-        locationOption.setOpenAutoNotifyMode();
-        //设置打开自动回调位置模式，该开关打开后，期间只要定位SDK检测到位置变化就会主动回调给开发者
-        locationOption.setOpenAutoNotifyMode(3000, 1, LocationClientOption.LOC_SENSITIVITY_HIGHT);
-//需将配置好的LocationClientOption对象，通过setLocOption方法传递给LocationClient对象使用
-        locationClient.setLocOption(locationOption);
-        LocationClient.start();
+
+        /*统一申请权限*/
+        List<String> permissionList  = new ArrayList<>();
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.
+                permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.
+                permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.READ_PHONE_STATE);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.
+                permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if(!permissionList.isEmpty()){
+            String [] permissions= permissionList.toArray(new String[permissionList.
+                    size()]);
+            /*使用ActivityCompat 统一申请权限 */
+            ActivityCompat.requestPermissions(MainActivity.this,permissions,1);
+        }else {
+            /*开始定位*/
+            LocationOption();
+            LocationClient.start();
+
+
+
+        }
+
+        //
+        MapMarker=findViewById(R.id.Marker);
+        MapMarker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //定义Maker坐标点
+                point = new LatLng(latitude,longitude);
+                //构建Marker图标
+                BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.makark);
+                //构建MarkerOption，用于在地图上添加Marker
+                OverlayOptions option = new MarkerOptions()
+                        .position(point)
+                        .icon(bitmap);
+                //在地图上添加Marker，并显示
+                mBaiduMap.addOverlay(option);
+            }
+        });
+
+        mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
+            //marker被点击时回调的方法
+            public boolean onMarkerClick(Marker marker) {
+
+                return true;
+            }
+        });
 
     }
+
+    //定位的设置
+private void  LocationOption(){
+    locationOption.setOpenGps(true); // 打开gps
+    locationOption.setScanSpan(0);//设置发起定位请求的间隔，int类型，单位ms
+    //如果设置为0，则代表单次定位，即仅定位一次，默认为0
+    //如果设置非0，需设置1000ms以上才有效
+    locationOption.setCoorType("bd09ll");//设置返回经纬度坐标类型
+    locationOption.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+    //可选，设置定位模式，默认高精度
+   //LocationMode.Hight_Accuracy：高精度；
+   //LocationMode. Battery_Saving：低功耗；
+   //LocationMode. Device_Sensors：仅使用设备；
+   //需将配置好的LocationClientOption对象，通过setLocOption方法传递给LocationClient对象使用
+    LocationClient.setLocOption(locationOption);
+
+}
+
+public class MyLocationListener extends BDAbstractLocationListener {
+        @Override
+        public void onReceiveLocation(BDLocation location) {
+            //获取纬度信息
+            latitude = location.getLatitude();
+            //获取经度信息
+            longitude = location.getLongitude();
+            //获取定位精度，默认值为0.0f
+            float radius = location.getRadius();
+            //获取经纬度坐标类型，以LocationClientOption中设置过的坐标类型为准
+            String coorType = location.getCoorType();
+            //获取定位类型、定位错误返回码，具体信息可参照类参考中BDLocation类中的说明
+            int errorCode = location.getLocType();
+            //使地图出现自己当前位置的标记
+            MyLocationData locData = new MyLocationData.Builder()
+                    .accuracy(location.getRadius())
+                    // 此处设置开发者获取到的方向信息，顺时针0-360
+                    .direction(location.getDirection()).latitude(location.getLatitude())
+                    .longitude(location.getLongitude()).build();
+            mBaiduMap.setMyLocationData(locData);
+            //使地图中心为当前位置
+            point = new LatLng(latitude,longitude);
+            MapStatusUpdate status1 = MapStatusUpdateFactory.newLatLng(point);
+            mBaiduMap.setMapStatus(status1);
+
+
+        }
+    }
+
+
+
+
+
+
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -93,10 +206,13 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理
+        LocationClient.stop();
+        mBaiduMap.setMyLocationEnabled(false);
         mMapView.onDestroy();
+        mMapView = null;
+        super.onDestroy();
     }
+
 }
 
 
