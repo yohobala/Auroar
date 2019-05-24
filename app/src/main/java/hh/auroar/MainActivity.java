@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        //
+        //在地图上添加当前位置的标记（暂定）
         MapMarker=findViewById(R.id.Marker);
         MapMarker.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //测试
+        //点击标记出现新窗口
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener(){
             public boolean onMarkerClick(Marker marker) {
              Intent i=new Intent(MainActivity.this, test.class);
@@ -140,15 +140,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-        mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
-            //marker被点击时回调的方法
-            public boolean onMarkerClick(Marker marker) {
-                Toast.makeText(getApplicationContext(),"提示内容",Toast.LENGTH_LONG).show();
-                return true;
-            }
-        });
 
     }
 
