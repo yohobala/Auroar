@@ -132,12 +132,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //测试
-        test=findViewById(R.id.test);
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener(){
+            public boolean onMarkerClick(Marker marker) {
              Intent i=new Intent(MainActivity.this, test.class);
              startActivity(i);
+             return true;
             }
         });
 
