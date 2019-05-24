@@ -1,6 +1,7 @@
 package hh.auroar;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.v4.app.ActivityCompat;
@@ -58,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     //声明地图图层
     private MapView mMapView = null;
     private Button MapMarker;
+    private Button test;
 
 
 
@@ -129,10 +131,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //测试
+        test=findViewById(R.id.test);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+             Intent i=new Intent(MainActivity.this, test.class);
+             startActivity(i);
+            }
+        });
+
+
+
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
             //marker被点击时回调的方法
             public boolean onMarkerClick(Marker marker) {
-
+                Toast.makeText(getApplicationContext(),"提示内容",Toast.LENGTH_LONG).show();
                 return true;
             }
         });
