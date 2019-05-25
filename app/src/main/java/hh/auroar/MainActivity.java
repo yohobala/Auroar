@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
         //点击标记出现新窗口
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener(){
             public boolean onMarkerClick(Marker marker) {
-             Intent i=new Intent(MainActivity.this, test.class);
+             Intent i=new Intent(MainActivity.this, ImageAndVideo.class);
              startActivity(i);
              return true;
             }
