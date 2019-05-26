@@ -27,7 +27,7 @@ public Button button;
         @Override
         public void onClick(View v) {
             Intent i = new Intent(Edit.this, ImageAndVideo.class);
-            i.putExtra("回传",editText.getText());
+            i.putExtra("回传",editText.getText().toString());
             startActivity(i);
         }
     });
