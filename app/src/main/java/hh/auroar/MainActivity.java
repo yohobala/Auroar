@@ -87,15 +87,15 @@ public class MainActivity extends AppCompatActivity {
 
         /*统一申请权限*/
         List<String> permissionList  = new ArrayList<>();
-        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.
+        if(ContextCompat.checkSelfPermission(this,Manifest.
                 permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
-        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.
+        if(ContextCompat.checkSelfPermission(this,Manifest.
                 permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED){
             permissionList.add(Manifest.permission.READ_PHONE_STATE);
         }
-        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.
+        if(ContextCompat.checkSelfPermission(this,Manifest.
                 permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             String [] permissions= permissionList.toArray(new String[permissionList.
                     size()]);
             /*使用ActivityCompat 统一申请权限 */
-            ActivityCompat.requestPermissions(MainActivity.this,permissions,1);
+            ActivityCompat.requestPermissions(this,permissions,1);
         }else {
             /*开始定位*/
             LocationOption();
