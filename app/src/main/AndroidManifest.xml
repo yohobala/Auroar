@@ -41,8 +41,9 @@
             android:enabled="true"
             android:process=":remote" />
 
+
         <activity android:name=".ImageAndVideo" />
-        <activity android:name=".Edit" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -51,5 +52,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

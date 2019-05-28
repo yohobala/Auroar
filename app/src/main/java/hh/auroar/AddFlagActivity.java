@@ -10,16 +10,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.opengl.Visibility;
+import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Spannable;
@@ -44,9 +40,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,8 +48,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ImageAndVideo
-        extends AppCompatActivity {
+public class AddFlagActivity extends AppCompatActivity {
 
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -176,7 +168,7 @@ public class ImageAndVideo
         content.setFocusableInTouchMode(true);
         content.requestFocus();
         content.setSelection(content.getText().length());
-        ImageAndVideo.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        AddFlagActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
     }
     //endregion
 
@@ -212,7 +204,7 @@ public class ImageAndVideo
                 //显示或隐藏软键盘，如果已显示则隐藏，反之显示
                 //参考网址： https://www.jianshu.com/p/dc9387417914
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.toggleSoftInput(0,InputMethodManager.HIDE_NOT_ALWAYS);
+                imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 
             }
         });
@@ -381,7 +373,7 @@ public class ImageAndVideo
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ImageAndVideo.this,ShareActivity.class);
+                Intent intent = new Intent(AddFlagActivity.this,ShareActivity.class);
                 intent.putExtra("title",title.getText().toString());
                 intent.putExtra("content",content.getText().toString());
                 startActivity(intent);
@@ -425,10 +417,10 @@ public class ImageAndVideo
     //region 调用图库
     private void callGallery(){
 
-        int permission_WRITE = ActivityCompat.checkSelfPermission(ImageAndVideo.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int permission_READ = ActivityCompat.checkSelfPermission(ImageAndVideo.this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        int permission_WRITE = ActivityCompat.checkSelfPermission(AddFlagActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int permission_READ = ActivityCompat.checkSelfPermission(AddFlagActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE);
         if(permission_WRITE != PackageManager.PERMISSION_GRANTED || permission_READ != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(ImageAndVideo.this,PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
+            ActivityCompat.requestPermissions(AddFlagActivity.this,PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
         }
 
         //调用系统图库
@@ -469,7 +461,7 @@ public class ImageAndVideo
                 insertImg(path);
             }catch (Exception e){
                 e.printStackTrace();
-                Toast.makeText(ImageAndVideo.this,"图片插入失败",Toast.LENGTH_SHORT).show();
+                Toast.makeText(AddFlagActivity.this,"图片插入失败", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -487,7 +479,7 @@ public class ImageAndVideo
 
         }else{
             //Log.d("YYPT_Insert", "tagPath: "+tagPath);
-            Toast.makeText(ImageAndVideo.this,"插入失败，无读写存储权限，请到权限中心开启",Toast.LENGTH_LONG).show();
+            Toast.makeText(AddFlagActivity.this,"插入失败，无读写存储权限，请到权限中心开启", Toast.LENGTH_LONG).show();
         }
     }
     //endregion
@@ -505,11 +497,11 @@ public class ImageAndVideo
     //endregion
 
     //region 根据图片路径利用SpannableString和ImageSpan来加载图片
-    private SpannableString getBitmapMime(String path,String tagPath) {
+    private SpannableString getBitmapMime(String path, String tagPath) {
         SpannableString ss = new SpannableString(tagPath);//这里使用加了<img>标签的图片路径
 
-        int width = ScreenUtils.getScreenWidth(ImageAndVideo.this);
-        int height = ScreenUtils.getScreenHeight(ImageAndVideo.this);
+        int width = ScreenUtils.getScreenWidth(AddFlagActivity.this);
+        int height = ScreenUtils.getScreenHeight(AddFlagActivity.this);
 
         Log.d("YYPT_IMG_SCREEN", "高度:"+height+",宽度:"+width);
 
@@ -612,8 +604,8 @@ public class ImageAndVideo
             //Log.d("YYPT_AFTER", path);
 
             //利用spannableString和ImageSpan来替换掉这些图片
-            int width = ScreenUtils.getScreenWidth(ImageAndVideo.this);
-            int height = ScreenUtils.getScreenHeight(ImageAndVideo.this);
+            int width = ScreenUtils.getScreenWidth(AddFlagActivity.this);
+            int height = ScreenUtils.getScreenHeight(AddFlagActivity.this);
 
             try {
                 BitmapFactory.Options options = new BitmapFactory.Options();
@@ -639,7 +631,7 @@ public class ImageAndVideo
                 super.dismiss();
                 hrView.setVisibility(View.VISIBLE);
                 bottomMenu.setVisibility(View.VISIBLE);
-                ImageAndVideo.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+                AddFlagActivity.this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
             }
         };
 
