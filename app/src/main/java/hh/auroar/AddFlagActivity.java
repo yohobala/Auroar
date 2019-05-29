@@ -397,8 +397,6 @@ public class AddFlagActivity extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("MM月dd日 HH:MM");
         toolbar.setTitle(sdf.format(date));
 
-        //将toolBar设置为该界面的Bar
-        setSupportActionBar(toolbar);
 
         //设置返回键，要在serSupportAction之后
         toolbar.setNavigationIcon(R.drawable.back);
