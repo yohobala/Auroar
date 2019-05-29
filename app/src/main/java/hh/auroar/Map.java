@@ -30,6 +30,9 @@ import com.baidu.mapapi.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
+import hh.auroar.clusterutil.clustering.ClusterItem;
+import hh.auroar.clusterutil.clustering.ClusterManager;
+
 public class Map extends AppCompatActivity {
     //声明定位设置
     LocationClientOption locationOption = new LocationClientOption();
@@ -69,6 +72,7 @@ public class Map extends AppCompatActivity {
         // 删除百度地图LoGo
         mMapView.removeViewAt(1);
 
+
         //注册监听函数
         LocationClient = new LocationClient(getApplicationContext());
         LocationClient.registerLocationListener(myListener);
@@ -94,12 +98,16 @@ public class Map extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,permissions,1);
         }else {
             /*开始定位*/
+
+
             LocationOption();
             LocationClient.start();
 
 
-
         }
+
+
+
 
         //在地图上添加当前位置的标记（暂定）
         MapMarker=findViewById(R.id.Marker);
@@ -109,7 +117,8 @@ public class Map extends AppCompatActivity {
                 //定义Maker坐标点
                 point = new LatLng(latitude,longitude);
                 //构建Marker图标
-                BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.makark);
+                BitmapDescriptor bitmap =BitmapDescriptorFactory
+                        .fromResourceWithDpi(R.drawable.marker,650);
                 //构建MarkerOption，用于在地图上添加Marker
                 OverlayOptions option = new MarkerOptions()
                         .position(point)
@@ -118,6 +127,8 @@ public class Map extends AppCompatActivity {
                 mBaiduMap.addOverlay(option);
             }
         });
+
+
 
         //点击标记出现新窗口
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener(){
@@ -128,9 +139,23 @@ public class Map extends AppCompatActivity {
             }
         });
 
-
     }
-
+    //ClusterItem接口的实现类
+    public class MyItem implements ClusterItem {
+        LatLng mPosition;
+        public MyItem(LatLng position) {
+            mPosition = position;
+        }
+        @Override
+        public LatLng getPosition() {
+            return mPosition;
+        }
+        @Override
+        public BitmapDescriptor getBitmapDescriptor() {
+            return BitmapDescriptorFactory
+                    .fromResource(R.drawable.complete);
+        }
+    }
     //定位的设置
     private void  LocationOption(){
         locationOption.setOpenGps(true); // 打开gps
