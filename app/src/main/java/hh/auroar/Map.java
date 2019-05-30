@@ -132,15 +132,15 @@ public class Map extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //弹出提示
-                Toast.makeText(Map.this,"请双击地图，生成标记",Toast.LENGTH_SHORT).show();
-                BaiduMap.OnMapDoubleClickListener listener = new BaiduMap.OnMapDoubleClickListener() {
+                Toast.makeText(Map.this,"请长按地图，生成标记",Toast.LENGTH_SHORT).show();
+                BaiduMap.OnMapLongClickListener listener = new BaiduMap.OnMapLongClickListener() {
                     /**
                      * 地图双击事件监听回调函数
                      *
                      * @param point 双击的地理坐标
                      */
                     @Override
-                    public void onMapDoubleClick(LatLng point) {
+                    public void onMapLongClick(LatLng point) {
                         //构建Marker图标
                         BitmapDescriptor bitmap = BitmapDescriptorFactory
                                 .fromResource(R.drawable.marker);
@@ -150,12 +150,12 @@ public class Map extends AppCompatActivity {
                                 .icon(bitmap);
 //在地图上添加Marker，并显示
                         mBaiduMap.addOverlay(option);
+
+
                     }
                 };
                 //设置地图双击事件监听
-                mBaiduMap.setOnMapDoubleClickListener(listener);
-
-
+                mBaiduMap.setOnMapLongClickListener(listener);
             }
         });
     }
