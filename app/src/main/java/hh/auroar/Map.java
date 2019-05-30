@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -111,22 +112,7 @@ public class Map extends AppCompatActivity {
 
         //在地图上添加当前位置的标记（暂定）
         MapMarker=findViewById(R.id.Marker);
-        MapMarker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //定义Maker坐标点
-                point = new LatLng(latitude,longitude);
-                //构建Marker图标
-                BitmapDescriptor bitmap =BitmapDescriptorFactory
-                        .fromResourceWithDpi(R.drawable.marker,650);
-                //构建MarkerOption，用于在地图上添加Marker
-                OverlayOptions option = new MarkerOptions()
-                        .position(point)
-                        .icon(bitmap);
-                //在地图上添加Marker，并显示
-                mBaiduMap.addOverlay(option);
-            }
-        });
+        markerclick();
 
 
 
@@ -140,21 +126,38 @@ public class Map extends AppCompatActivity {
         });
 
     }
-    //ClusterItem接口的实现类
-    public class MyItem implements ClusterItem {
-        LatLng mPosition;
-        public MyItem(LatLng position) {
-            mPosition = position;
-        }
-        @Override
-        public LatLng getPosition() {
-            return mPosition;
-        }
-        @Override
-        public BitmapDescriptor getBitmapDescriptor() {
-            return BitmapDescriptorFactory
-                    .fromResource(R.drawable.complete);
-        }
+    public void markerclick()
+    {
+        MapMarker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //弹出提示
+                Toast.makeText(Map.this,"请双击地图，生成标记",Toast.LENGTH_SHORT).show();
+                BaiduMap.OnMapDoubleClickListener listener = new BaiduMap.OnMapDoubleClickListener() {
+                    /**
+                     * 地图双击事件监听回调函数
+                     *
+                     * @param point 双击的地理坐标
+                     */
+                    @Override
+                    public void onMapDoubleClick(LatLng point) {
+                        //构建Marker图标
+                        BitmapDescriptor bitmap = BitmapDescriptorFactory
+                                .fromResource(R.drawable.marker);
+//构建MarkerOption，用于在地图上添加Marker
+                        OverlayOptions option = new MarkerOptions()
+                                .position(point)
+                                .icon(bitmap);
+//在地图上添加Marker，并显示
+                        mBaiduMap.addOverlay(option);
+                    }
+                };
+                //设置地图双击事件监听
+                mBaiduMap.setOnMapDoubleClickListener(listener);
+
+
+            }
+        });
     }
     //定位的设置
     private void  LocationOption(){
