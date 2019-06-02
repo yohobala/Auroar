@@ -1,14 +1,19 @@
 package hh.auroar;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.location.BDAbstractLocationListener;
@@ -34,7 +39,7 @@ import java.util.List;
 import hh.auroar.clusterutil.clustering.ClusterItem;
 import hh.auroar.clusterutil.clustering.ClusterManager;
 
-public class Map extends AppCompatActivity {
+public class Map extends AppCompatActivity  {
     //声明定位设置
     LocationClientOption locationOption = new LocationClientOption();
     //声明LocationClient类
@@ -52,10 +57,11 @@ public class Map extends AppCompatActivity {
     private MapView mMapView = null;
     private Button MapMarker;
     private Button test;
+    private TextView testtext;
 
-
-
-
+//
+    int PointId;
+    SQLiteDatabase MyPointdb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +78,10 @@ public class Map extends AppCompatActivity {
         mBaiduMap.setMyLocationEnabled(true);
         // 删除百度地图LoGo
         mMapView.removeViewAt(1);
-
+        testtext=findViewById(R.id.textView);
+//数据库建立
+        PointDateBase db =new PointDateBase(Map.this,"point_db",null,1);
+        MyPointdb=db.getWritableDatabase();
 
         //注册监听函数
         LocationClient = new LocationClient(getApplicationContext());
@@ -105,6 +114,7 @@ public class Map extends AppCompatActivity {
             LocationClient.start();
 
 
+
         }
 
 
@@ -125,7 +135,39 @@ public class Map extends AppCompatActivity {
             }
         });
 
+
+
+
     }
+
+    private void queryStudents() {
+
+        // 相当于 select * from students 语句
+        Cursor cursor = MyPointdb.query("point", null,
+                "id >= 1", new String[]{"3"},
+                null, null, null, null);
+
+        // 不断移动光标获取值
+        while (cursor.moveToNext()) {
+            // 直接通过索引获取字段值
+            int pointId = cursor.getInt(0);
+            // 先获取 name 的索引值，然后再通过索引获取字段值
+            String pointLatitude = cursor.getString(cursor.getColumnIndex("latitude"));
+            String pointLongitude = cursor.getString(cursor.getColumnIndex("longitude"));
+            testtext.setText("id: " + pointId + " latitude: " + pointLatitude+"longitude:"+pointLongitude+"\n");
+        }
+        // 关闭光标
+        cursor.close();
+    }
+
+
+
+
+
+
+
+
+
     public void markerclick()
     {
         MapMarker.setOnClickListener(new View.OnClickListener() {
@@ -142,14 +184,20 @@ public class Map extends AppCompatActivity {
                     @Override
                     public void onMapLongClick(LatLng point) {
                         //构建Marker图标
+
                         BitmapDescriptor bitmap = BitmapDescriptorFactory
                                 .fromResource(R.drawable.marker);
 //构建MarkerOption，用于在地图上添加Marker
                         OverlayOptions option = new MarkerOptions()
                                 .position(point)
                                 .icon(bitmap);
+                        //pointid 加一，并加入数据库
+                        PointId=PointId+1;
+                        insertPoint();
 //在地图上添加Marker，并显示
                         mBaiduMap.addOverlay(option);
+
+
 
 
                     }
@@ -205,8 +253,35 @@ public class Map extends AppCompatActivity {
         }
     }
 
+    public  class   Point {
+        public int id;
+        public double PointLatitude;
+        public double PointLongitude;
+    }
 
+   public  void  insertPoint(){
+        if (PointId != 0 ){
+           ContentValues values = pointToContentValues(mPoint(PointId,point));
+            MyPointdb.insert("point", null, values);
+       }
+   }
 
+   private Point mPoint(int i,LatLng point){
+        Point mpoint =new  Point();
+        mpoint.id=i;
+        mpoint.PointLatitude=point.latitude;
+        mpoint.PointLongitude=point.latitude;
+        return  mpoint;
+   }
+    // 将 student 对象的值存储到 ContentValues 中
+    private ContentValues pointToContentValues(Point mpoint) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("id", mpoint.id);
+        contentValues.put("name", mpoint.PointLatitude);
+        contentValues.put("tel_no", mpoint.PointLongitude);
+        Toast.makeText(Map.this,"插入",Toast.LENGTH_SHORT).show();
+        return contentValues;
+    }
 
 
 

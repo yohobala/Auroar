@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AddFlagActivity"
-    android:background="#cb4042">
+    android:background="@color/white">
 
 
     <android.support.v7.widget.Toolbar
@@ -14,7 +14,7 @@
         app:popupTheme="@style/ToolbarPopupTheme"
         android:layout_height="?attr/actionBarSize"
         app:titleTextAppearance="@style/Toolbar.TitleText"
-        android:background="@color/toolbar_primary">
+        android:background="@color/white">
     </android.support.v7.widget.Toolbar>
 
     <EditText
