@@ -36,8 +36,7 @@ import com.baidu.mapapi.model.LatLng;
 import java.util.ArrayList;
 import java.util.List;
 
-import hh.auroar.clusterutil.clustering.ClusterItem;
-import hh.auroar.clusterutil.clustering.ClusterManager;
+
 
 public class Map extends AppCompatActivity  {
     //声明定位设置
@@ -62,7 +61,8 @@ public class Map extends AppCompatActivity  {
 //
     int PointId;
     SQLiteDatabase MyPointdb;
-
+    SQLiteDatabase MyPointdb_read;
+Cursor cursor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,9 +80,9 @@ public class Map extends AppCompatActivity  {
         mMapView.removeViewAt(1);
         testtext=findViewById(R.id.textView);
 //数据库建立
-        PointDateBase db =new PointDateBase(Map.this,"point_db",null,1);
+        PointDateBase db =new PointDateBase(Map.this,PointDateBase.TABLE_NAME,null,1);
         MyPointdb=db.getWritableDatabase();
-
+        MyPointdb_read=db.getReadableDatabase();
         //注册监听函数
         LocationClient = new LocationClient(getApplicationContext());
         LocationClient.registerLocationListener(myListener);
@@ -113,6 +113,9 @@ public class Map extends AppCompatActivity  {
             LocationOption();
             LocationClient.start();
 
+
+            //插入数据库的标记
+            queryPoint();
 
 
         }
@@ -262,7 +265,7 @@ public class Map extends AppCompatActivity  {
    public  void  insertPoint(){
         if (PointId != 0 ){
            ContentValues values = pointToContentValues(mPoint(PointId,point));
-            MyPointdb.insert("point", null, values);
+            MyPointdb.insert(PointDateBase.TABLE_NAME, null, values);
        }
    }
 
@@ -277,12 +280,36 @@ public class Map extends AppCompatActivity  {
     private ContentValues pointToContentValues(Point mpoint) {
         ContentValues contentValues = new ContentValues();
         contentValues.put("id", mpoint.id);
-        contentValues.put("name", mpoint.PointLatitude);
-        contentValues.put("tel_no", mpoint.PointLongitude);
+        contentValues.put("latitude", mpoint.PointLatitude);
+        contentValues.put("longitude", mpoint.PointLongitude);
         Toast.makeText(Map.this,"插入",Toast.LENGTH_SHORT).show();
         return contentValues;
     }
-
+    public  void  queryPoint(){
+        cursor = MyPointdb_read.query(PointDateBase.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+        if (cursor!=null&&cursor.moveToFirst()){
+            do {
+                double latitude =cursor.getDouble(cursor.getColumnIndex("latitude"));
+                double longitude =cursor.getDouble(cursor.getColumnIndex("longitude"));
+                BitmapDescriptor bitmap = BitmapDescriptorFactory
+                        .fromResource(R.drawable.marker);
+                //构建MarkerOption，用于在地图上添加Marker
+                OverlayOptions option = new MarkerOptions()
+                        .position(new LatLng(latitude,longitude))
+                        .icon(bitmap);
+                //在地图上添加Marker，并显示
+                mBaiduMap.addOverlay(option);
+            }while (cursor.moveToNext());
+        }
+    }
 
 
 
