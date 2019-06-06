@@ -27,7 +27,7 @@
         android:hint="请输入标题"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:textColor="#fff"
+        android:textColor="#000000"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         />
@@ -49,7 +49,7 @@
             android:layout_height="wrap_content"
             android:gravity="top"
             android:textSize="16sp"
-            android:textColor="#fff"
+            android:textColor="#000000"
             android:hint="请输入内容"/>
     </ScrollView>
 
@@ -59,7 +59,7 @@
         android:id="@+id/view_edit_1"
         android:layout_width="match_parent"
         android:layout_height="1dip"
-        android:background="#a8d8b9"
+        android:background="@color/colorPrimary"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_above="@id/rl_edit_bottom"/>
@@ -69,7 +69,7 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        android:background="@color/colorPrimary"
         android:paddingBottom="8dp"
         android:paddingTop="8dp"
         android:paddingLeft="20dp"

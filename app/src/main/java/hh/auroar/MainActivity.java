@@ -1,6 +1,7 @@
 package hh.auroar;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -101,9 +102,6 @@ public class MainActivity extends AppCompatActivity {
         addBtn = findViewById(R.id.iv_add_flag);
         //endregion
 
-
-        //判断是否为第一次打开APP并植入引导页
-        importGuide();
 
 
         //region 初始化toolbar
@@ -304,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
     //endregion
 
     //region 让菜单能显示图标
+    @SuppressLint("RestrictedApi")
     @Override
     protected boolean onPrepareOptionsPanel(View view, android.view.Menu menu) {
         if(menu != null){
@@ -332,29 +331,7 @@ public class MainActivity extends AppCompatActivity {
     }
     //endregion
 
-    //判断是否为第一次打开APP并植入引导页
-    private void importGuide(){
-        SharePreference sp = new SharePreference(MainActivity.this);
-        if(sp.getState()){
-            //是第一次打开
-            addGuide();
 
-            sp.setState();
-        }
-    }
-
-
-
-    //使用引导
-    private void addGuide(){
-        Date thisDate = new Date();
-        doInsert("教程一","点击右下角加号可以编写新Flag，长按可以删除Flag",thisDate,0);
-        doInsert("教程二","首页列表根据最近一次更新的时间进行排序",thisDate,-1);
-        doInsert("教程三","可以插入图片，且保存按钮很鸡肋，不点击也会自动保存的",thisDate,-2);
-        doInsert("教程四","首页下拉可以看到你所有Flag的状态哦",thisDate,-3);
-        doInsert("教程五","想联系作者，点击\"关于\"试试看吧",thisDate,-4);
-        doInsert("教程六","删除所有教程，开始你的立Flag之旅吧",thisDate,-5);
-    }
 
 
     //插入默认往数据库里一些数据，引导用户使用

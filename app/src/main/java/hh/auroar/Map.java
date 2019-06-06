@@ -24,6 +24,7 @@ import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BaiduMapOptions;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
@@ -67,25 +68,9 @@ Cursor cursor;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
-        //设置地图参数
-        BaiduMapOptions options = new BaiduMapOptions();
-        options.mapType(BaiduMap.MAP_TYPE_NORMAL);//普通2D地图
-        //创建地图，并把设置参数加上
-        mMapView = new MapView(this, options);
-        mMapView=findViewById(R.id.bmapView);
-        //设置mBbaiMap,并开启定位图层
-        mBaiduMap = mMapView.getMap();
-        mBaiduMap.setMyLocationEnabled(true);
-        // 删除百度地图LoGo
-        mMapView.removeViewAt(1);
-        testtext=findViewById(R.id.textView);
-//数据库建立
-        PointDateBase db =new PointDateBase(Map.this,PointDateBase.TABLE_NAME,null,1);
-        MyPointdb=db.getWritableDatabase();
-        MyPointdb_read=db.getReadableDatabase();
-        //注册监听函数
-        LocationClient = new LocationClient(getApplicationContext());
-        LocationClient.registerLocationListener(myListener);
+
+        //初始化
+        init();
 
         /*统一申请权限*/
         List<String> permissionList  = new ArrayList<>();
@@ -108,67 +93,51 @@ Cursor cursor;
             ActivityCompat.requestPermissions(this,permissions,1);
         }else {
             /*开始定位*/
-
-
             LocationOption();
             LocationClient.start();
-
-
             //插入数据库的标记
             queryPoint();
-
-
         }
 
-
-
-
         //在地图上添加当前位置的标记（暂定）
-        MapMarker=findViewById(R.id.Marker);
         markerclick();
-
-
 
         //点击标记出现新窗口
         mBaiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener(){
             public boolean onMarkerClick(Marker marker) {
+                //切换界面
                 Intent i=new Intent(Map.this, MainActivity.class);
                 startActivity(i);
                 return  true;
             }
         });
-
-
-
-
-    }
-
-    private void queryStudents() {
-
-        // 相当于 select * from students 语句
-        Cursor cursor = MyPointdb.query("point", null,
-                "id >= 1", new String[]{"3"},
-                null, null, null, null);
-
-        // 不断移动光标获取值
-        while (cursor.moveToNext()) {
-            // 直接通过索引获取字段值
-            int pointId = cursor.getInt(0);
-            // 先获取 name 的索引值，然后再通过索引获取字段值
-            String pointLatitude = cursor.getString(cursor.getColumnIndex("latitude"));
-            String pointLongitude = cursor.getString(cursor.getColumnIndex("longitude"));
-            testtext.setText("id: " + pointId + " latitude: " + pointLatitude+"longitude:"+pointLongitude+"\n");
-        }
-        // 关闭光标
-        cursor.close();
     }
 
 
-
-
-
-
-
+    //初始化控件
+    private void init() {
+        //设置地图参数
+        BaiduMapOptions options = new BaiduMapOptions();
+        options.mapType(BaiduMap.MAP_TYPE_NORMAL);//普通2D地图
+        //创建地图，并把设置参数加上
+        mMapView = new MapView(this, options);
+        mMapView=findViewById(R.id.bmapView);
+        //设置mBbaiMap,并开启定位图层
+        mBaiduMap = mMapView.getMap();
+        mBaiduMap.setMyLocationEnabled(true);
+        // 删除百度地图LoGo
+        mMapView.removeViewAt(1);
+        testtext=findViewById(R.id.textView);
+        //标记点数据库建立
+        PointDateBase db =new PointDateBase(Map.this,PointDateBase.TABLE_NAME,null,1);
+        MyPointdb=db.getWritableDatabase();
+        MyPointdb_read=db.getReadableDatabase();
+        //注册监听函数
+        LocationClient = new LocationClient(getApplicationContext());
+        LocationClient.registerLocationListener(myListener);
+        //初始化标记
+        MapMarker=findViewById(R.id.Marker);
+    }
 
 
     public void markerclick()
@@ -181,22 +150,26 @@ Cursor cursor;
                 BaiduMap.OnMapLongClickListener listener = new BaiduMap.OnMapLongClickListener() {
                     /**
                      * 地图双击事件监听回调函数
-                     *
-                     * @param point 双击的地理坐标
                      */
                     @Override
                     public void onMapLongClick(LatLng point) {
                         //构建Marker图标
-
                         BitmapDescriptor bitmap = BitmapDescriptorFactory
                                 .fromResource(R.drawable.marker);
-//构建MarkerOption，用于在地图上添加Marker
+                        //构建MarkerOption，用于在地图上添加Marker
                         OverlayOptions option = new MarkerOptions()
                                 .position(point)
                                 .icon(bitmap);
                         //pointid 加一，并加入数据库
                         PointId=PointId+1;
-                        insertPoint();
+                        //pointid 加一，并加入数据库
+                        PointId=PointId+1;
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put("id", PointId);
+                        contentValues.put("latitude", point.latitude);
+                        contentValues.put("longitude", point.longitude);
+                        Toast.makeText(Map.this,"插入",Toast.LENGTH_SHORT).show();
+                        MyPointdb.insert(PointDateBase.TABLE_NAME, null, contentValues);
 //在地图上添加Marker，并显示
                         mBaiduMap.addOverlay(option);
 
@@ -251,40 +224,15 @@ Cursor cursor;
             point = new LatLng(latitude,longitude);
             MapStatusUpdate status1 = MapStatusUpdateFactory.newLatLng(point);
             mBaiduMap.setMapStatus(status1);
-
+            //设置地图缩放级别
+            MapStatus.Builder builder = new MapStatus.Builder();
+            builder.zoom(14.0f);
+            mBaiduMap.setMapStatus(MapStatusUpdateFactory.newMapStatus(builder.build()));
 
         }
     }
 
-    public  class   Point {
-        public int id;
-        public double PointLatitude;
-        public double PointLongitude;
-    }
 
-   public  void  insertPoint(){
-        if (PointId != 0 ){
-           ContentValues values = pointToContentValues(mPoint(PointId,point));
-            MyPointdb.insert(PointDateBase.TABLE_NAME, null, values);
-       }
-   }
-
-   private Point mPoint(int i,LatLng point){
-        Point mpoint =new  Point();
-        mpoint.id=i;
-        mpoint.PointLatitude=point.latitude;
-        mpoint.PointLongitude=point.latitude;
-        return  mpoint;
-   }
-    // 将 student 对象的值存储到 ContentValues 中
-    private ContentValues pointToContentValues(Point mpoint) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("id", mpoint.id);
-        contentValues.put("latitude", mpoint.PointLatitude);
-        contentValues.put("longitude", mpoint.PointLongitude);
-        Toast.makeText(Map.this,"插入",Toast.LENGTH_SHORT).show();
-        return contentValues;
-    }
     public  void  queryPoint(){
         cursor = MyPointdb_read.query(PointDateBase.TABLE_NAME,
                 null,
