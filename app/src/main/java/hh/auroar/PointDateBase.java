@@ -10,7 +10,10 @@ public class PointDateBase extends SQLiteOpenHelper {
     private static final String DB_NAME ="myTest.db";
     public static  final String TABLE_NAME ="Points";
 
-    public  static  final  String CREATE_POINT="create table if not exists "+ TABLE_NAME +"("+"id integer primary key autoincrement,"+"latitude double,"+"longitude double)";
+    public  static  final  String CREATE_POINT="create table if not exists "+ TABLE_NAME +"("+
+            "id integer primary key autoincrement,"+
+            "latitude double,"+
+            "longitude double)";
 
     public PointDateBase(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context,DB_NAME, null, DB_VERSION);

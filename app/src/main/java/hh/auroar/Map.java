@@ -139,7 +139,9 @@ Cursor cursor;
         MapMarker=findViewById(R.id.Marker);
     }
 
-
+/*
+地图上标记
+ */
     public void markerclick()
     {
         MapMarker.setOnClickListener(new View.OnClickListener() {
@@ -161,21 +163,17 @@ Cursor cursor;
                                 .position(point)
                                 .icon(bitmap);
                         //pointid 加一，并加入数据库
-                        PointId=PointId+1;
+//                        PointId=PointId+1;
                         //pointid 加一，并加入数据库
-                        PointId=PointId+1;
+//                        PointId=PointId+1;
                         ContentValues contentValues = new ContentValues();
-                        contentValues.put("id", PointId);
+//                        contentValues.put("id", PointId);
                         contentValues.put("latitude", point.latitude);
                         contentValues.put("longitude", point.longitude);
                         Toast.makeText(Map.this,"插入",Toast.LENGTH_SHORT).show();
                         MyPointdb.insert(PointDateBase.TABLE_NAME, null, contentValues);
 //在地图上添加Marker，并显示
                         mBaiduMap.addOverlay(option);
-
-
-
-
                     }
                 };
                 //设置地图双击事件监听
@@ -183,6 +181,7 @@ Cursor cursor;
             }
         });
     }
+
     //定位的设置
     private void  LocationOption(){
         locationOption.setOpenGps(true); // 打开gps
@@ -200,6 +199,7 @@ Cursor cursor;
 
     }
 
+    //通过百度SDK创建一个类，用于定位
     public class MyLocationListener extends BDAbstractLocationListener {
         @Override
         public void onReceiveLocation(BDLocation location) {
@@ -232,7 +232,7 @@ Cursor cursor;
         }
     }
 
-
+//重启时查询点，在地图上生成
     public  void  queryPoint(){
         cursor = MyPointdb_read.query(PointDateBase.TABLE_NAME,
                 null,
