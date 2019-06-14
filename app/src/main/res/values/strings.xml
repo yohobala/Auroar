@@ -2,4 +2,6 @@
     <string name="app_name">Aurora</string>
     <string name="title_markercluster_desc">\t\t缩小地图，以显示标注物的聚合点 \n
     \t\t放大地图，显示Marker点 \n</string>
+
+    <string name="test">test%1$d.db</string>
 </resources>

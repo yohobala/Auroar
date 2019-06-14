@@ -60,7 +60,7 @@ public class Map extends AppCompatActivity  {
     private TextView testtext;
 
 //
-    int PointId;
+    public static int PointId;
     SQLiteDatabase MyPointdb;
     SQLiteDatabase MyPointdb_read;
 Cursor cursor;
@@ -107,6 +107,7 @@ Cursor cursor;
             public boolean onMarkerClick(Marker marker) {
                 //切换界面
                 Intent i=new Intent(Map.this, MainActivity.class);
+                intent.putExtra("person_data", person);
                 startActivity(i);
                 return  true;
             }
@@ -129,7 +130,7 @@ Cursor cursor;
         mMapView.removeViewAt(1);
         testtext=findViewById(R.id.textView);
         //标记点数据库建立
-        PointDateBase db =new PointDateBase(Map.this,PointDateBase.TABLE_NAME,null,1);
+        PointDateBase db =new PointDateBase(Map.this,"point.db",null,1);
         MyPointdb=db.getWritableDatabase();
         MyPointdb_read=db.getReadableDatabase();
         //注册监听函数
@@ -163,13 +164,12 @@ Cursor cursor;
                                 .position(point)
                                 .icon(bitmap);
                         //pointid 加一，并加入数据库
-//                        PointId=PointId+1;
-                        //pointid 加一，并加入数据库
-//                        PointId=PointId+1;
+                        PointId=PointId+1;
                         ContentValues contentValues = new ContentValues();
-//                        contentValues.put("id", PointId);
+                        contentValues.put("id", PointId);
                         contentValues.put("latitude", point.latitude);
                         contentValues.put("longitude", point.longitude);
+
                         Toast.makeText(Map.this,"插入",Toast.LENGTH_SHORT).show();
                         MyPointdb.insert(PointDateBase.TABLE_NAME, null, contentValues);
 //在地图上添加Marker，并显示

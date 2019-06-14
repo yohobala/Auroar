@@ -40,14 +40,17 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import static hh.auroar.Map.PointId;
+
 
 public class MainActivity extends AppCompatActivity {
     int delPosition=-1;            //用来删除的一个变量，因为内部类要用
 
     private String TAG = "YYPT";
 
-
-    DataBaseUtil dbUtil;
+    String sAgeFormat = getResources().getString(R.string.test);
+    String sFinalAge = String.format(sAgeFormat, PointId);
+    DataBaseUtil dbUtil=new DataBaseUtil(MainActivity.this,"point.db",null,1);
 
     //region 数据声明
     int wholeCount = 0;              //flags的总条数
@@ -207,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setIcon(R.drawable.flag4_2);
-                builder.setTitle("凡事预则立，不预则废");
+                builder.setTitle("删除");
                 builder.setMessage("是否要删除该条FLAG？");
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
