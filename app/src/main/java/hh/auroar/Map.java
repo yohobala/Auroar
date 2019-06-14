@@ -107,7 +107,8 @@ Cursor cursor;
             public boolean onMarkerClick(Marker marker) {
                 //切换界面
                 Intent i=new Intent(Map.this, MainActivity.class);
-                intent.putExtra("person_data", person);
+                String markerPoint_id =Integer.toString(1);
+                i.putExtra("markerPoint_id",markerPoint_id );
                 startActivity(i);
                 return  true;
             }

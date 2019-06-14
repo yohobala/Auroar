@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
@@ -48,9 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String TAG = "YYPT";
 
-    String sAgeFormat = getResources().getString(R.string.test);
-    String sFinalAge = String.format(sAgeFormat, PointId);
-    DataBaseUtil dbUtil=new DataBaseUtil(MainActivity.this,"point.db",null,1);
+    DataBaseUtil dbUtil;
 
     //region 数据声明
     int wholeCount = 0;              //flags的总条数
@@ -60,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
     List<Flag> flagList = new ArrayList<>();    //保存flags的列表
 
     FlagAdapter adapter;            //listView的adapter
+
+    String markerPoint_id;//标记点
+    String sFinalAge;
     //endregion
 
 
@@ -94,12 +96,17 @@ public class MainActivity extends AppCompatActivity {
 
         //初始化控件
         initWidget();
+        //传入数据建立标记点数据库数据库
+        Intent i=getIntent();
+        String markerPoint_id=i.getStringExtra("markerPoint_id");
+        String sAgeFormat = getResources().getString(R.string.test,markerPoint_id);
+        String sFinalAge = String.format(sAgeFormat,markerPoint_id);
 
     }
 
     //region 初始化参数
     private void init(){
-        dbUtil = new DataBaseUtil(MainActivity.this,"Flags.db",null,1);
+        dbUtil=new DataBaseUtil(MainActivity.this,sFinalAge,null,1);
 
         //region 控件初始化
         addBtn = findViewById(R.id.iv_add_flag);
@@ -180,6 +187,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this,AddFlagActivity.class);
+                intent.putExtra("markerPoint_id",markerPoint_id);
                 Flag flag = new Flag();
                 intent.putExtra("Flag",flag);
                 startActivity(intent);

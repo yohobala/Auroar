@@ -66,6 +66,7 @@ public class AddFlagActivity extends AppCompatActivity {
     Date date;      //点进来的时候的时间
     Boolean isChanged = false;      //判断内容是否被修改过
 
+    String sFinalAge;
 
     //控件申明
     Toolbar toolbar;            //ToolBar
@@ -97,6 +98,11 @@ public class AddFlagActivity extends AppCompatActivity {
         //初始化控件各种事件
         initWidget();
 
+        //传入数据建立标记点数据库数据库
+        Intent i=getIntent();
+        String markerPoint_id=i.getStringExtra("markerPoint_id");
+        String sAgeFormat = getResources().getString(R.string.test,markerPoint_id);
+        String sFinalAge = String.format(sAgeFormat,markerPoint_id);
 
     }
 
@@ -158,7 +164,7 @@ public class AddFlagActivity extends AppCompatActivity {
         initToolBar();
 
         //初始化数据库帮助对象
-        dbUtil = new DataBaseUtil(this,"Flags.db",null,1);
+        dbUtil=new DataBaseUtil(AddFlagActivity.this,sFinalAge,null,1);
 
         //初始化点击状态后弹出的最下面的dialog
         initDialog();

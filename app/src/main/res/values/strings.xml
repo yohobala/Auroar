@@ -3,5 +3,5 @@
     <string name="title_markercluster_desc">\t\t缩小地图，以显示标注物的聚合点 \n
     \t\t放大地图，显示Marker点 \n</string>
 
-    <string name="test">test%1$d.db</string>
+    <string name="test">%1$s.db</string>//根据标记点ID创建数据库
 </resources>
